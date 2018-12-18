@@ -17,22 +17,45 @@ var connection = mysql.createConnection({
 
 connection.connect(function (err) {
     if (err) throw err;
-    console.log(  "you are connected")
-    display()
+    console.log("you are connected---Welcome to BAMAZON")
+    welcome()
 });
+function welcome(){
+    inquirer.prompt([
+        {
+            type: "list",
+            name: "customerOptions",
+            message: "What would you like to do",
+            choices: ["View products for sale", "Exit the store"]
+        }
+    ]).then(function (answer) {
+        switch (answer.customerOptions) {
+            case "View products for sale":
+                // console.log("youre in")
+                display();
+                break;
+
+            case "Exit the store":
+                console.log("Have a nice day")
+                connection.end()
+                break;
+        }
+    })
+   
+}
 
 function display() {
-    var queryString ="SELECT * FROM products"
-    connection.query(queryString,function(err,res){
+    var queryString = "SELECT * FROM products"
+    connection.query(queryString, function (err, res) {
         if (err) throw err;
 
         var table = new Table({
-            head: ["ID","Product Name", "Department Name","Cost","Product Sales","Quantity"],
-            colWidths: [10,25,25,10,25,10]
+            head: ["ID", "Product Name", "Department Name", "Cost", "Product Sales", "Quantity"],
+            colWidths: [10, 25, 25, 10, 20, 10]
         })
-        for(var j = 0;j < res.length; j++){
+        for (var j = 0; j < res.length; j++) {
             table.push(
-                [res[j].item_id, res[j].product_name, res[j].department_name, res[j].price, res[j].product_sales, res[j].stock_quantity],
+                [res[j].item_id, res[j].product_name, res[j].department_name, res[j].price,res[j].product_sales, res[j].stock_quantity],
             )
         }
         console.log(table.toString());
@@ -73,7 +96,6 @@ function manageCustomer() {
                     if (err) throw err;
                     console.log("your purchase order has been generated. Your account will be billed "+purchase_cost)
                     
-                    display()
                 })
                 var current_sales =(res[purchase_item_id]).product_sales
                 connection.query("UPDATE products SET ? WHERE ?",[
@@ -82,7 +104,8 @@ function manageCustomer() {
                 ], function(err, res){
                     if (err) throw err;
                     console.log("sales updated")
-
+                    
+                    welcome()
                 })
             }
         })

@@ -16,7 +16,7 @@ var connection = mysql.createConnection({
 
 connection.connect(function (err) {
     if (err) throw err;
-    console.log("you are connected")
+    console.log("you are connected---Welcome to BAMAZON")
     inventoryManager()
 });
 
@@ -26,12 +26,12 @@ function display() {
         if (err) throw err;
 
         var table = new Table({
-            head: ["ID", "Product Name", "Department Name", "Cost", "Quantity"],
-            colWidths: [10, 25, 25, 10, 10]
+            head: ["ID", "Product Name", "Department Name", "Cost", "Product Sales", "Quantity"],
+            colWidths: [10, 25, 25, 10, 20, 10]
         })
         for (var j = 0; j < res.length; j++) {
             table.push(
-                [res[j].item_id, res[j].product_name, res[j].department_name, res[j].price, res[j].stock_quantity],
+                [res[j].item_id, res[j].product_name, res[j].department_name, res[j].price,res[j].product_sales, res[j].stock_quantity],
             )
         }
         console.log(table.toString());
@@ -44,7 +44,7 @@ function inventoryManager() {
             type: "list",
             name: "managerOptions",
             message: "What would you like to do",
-            choices: ["View products for sale", "View low inventory", "Add to inventory", "Stock a new product"]
+            choices: ["View products for sale", "View low inventory", "Add to inventory", "Stock a new product","Exit the application"]
         }
     ]).then(function (answer) {
         switch (answer.managerOptions) {
@@ -64,6 +64,10 @@ function inventoryManager() {
             case "Stock a new product":
                 addProduct();
                 break;
+            case "Exit the application":
+            console.log("Have a nice day");
+            connection.end()
+
         }
     })
 }
@@ -74,7 +78,7 @@ function viewLow() {
         if (err) throw err;
         for (j = 0; j < res.length; j++) {
             if (res[j].stock_quantity < 5) {
-                console.log(
+                console.log("---------->" +
                     res[j].product_name, res[j].stock_quantity
                 )
             }
@@ -132,7 +136,7 @@ function addProduct(){
         },{
             type: "input",
             name: "department_name",
-            message: "What category shoule I file that under"
+            message: "What category should I file that under"
         },{
             type: "input",
             name: "price",
@@ -148,7 +152,8 @@ function addProduct(){
             product_name: answers.product_name,
             department_name: answers.department_name,
             price: answers.price,
-            stock_quantity: parseInt(answers.stock_quantity)
+            stock_quantity: parseInt(answers.stock_quantity),
+            product_sales: 0
         })
         display()
     })

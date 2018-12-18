@@ -1,7 +1,7 @@
-DROP DATABASE IF EXISTS Departments_DB;
-CREATE database Departments_DB;
+-- DROP DATABASE IF EXISTS Departments_DB;
+-- CREATE database Departments_DB;
 
-USE Departments_DB;
+USE Bamazon_DB;
 -- create a foods_nutrition table that contains id, foodname, calories, protein, fats, carbohyrates and primary key of id 
 CREATE TABLE departments (
   -- Code Starts Here
@@ -28,4 +28,5 @@ INSERT INTO departments (department_name, over_head_costs)
         ("anti-anxiety", 2000), 
         ("mood-stabilizer", 5500), 
         ("anti-psychotic", 70000),
-        ("pain-relief", 900)
+        ("pain-management", 76)
+       
