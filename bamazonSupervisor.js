@@ -17,21 +17,21 @@ var connection = mysql.createConnection({
 connection.connect(function (err) {
     if (err) throw err;
     console.log("you are connected")
-    display()
+    displayDepts()
 });
 
-function display() {
-    var queryString = "SELECT * FROM products"
+function displayDepts() {
+    var queryString = "SELECT * FROM departments"
     connection.query(queryString, function (err, res) {
         if (err) throw err;
-
+// console.log(res)
         var table = new Table({
-            head: ["ID", "Product Name", "Department Name", "Cost", "Product Sales", "Quantity"],
-            colWidths: [10, 25, 25, 10, 20, 10]
+            head: ["ID", "Department Name", "Overhead Cost"],
+            colWidths: [10, 25, 10,]
         })
         for (var j = 0; j < res.length; j++) {
             table.push(
-                [res[j].item_id, res[j].product_name, res[j].department_name, res[j].price,res[j].product_sales, res[j].stock_quantity],
+                [res[j].department_id, res[j].department_name, res[j].over_head_costs,]
             )
         }
         console.log(table.toString());
@@ -44,7 +44,7 @@ function inventorySupervisor(){
             type: "list",
             name: "supervisorOptions",
             message: "What would you like to do?",
-            choices: ["View product sales by department","Create new department"]
+            choices: ["View product sales by department","Create new department","Exit the application"]
         }
     ]).then(function(answer){
         switch (answer.supervisorOptions){
@@ -54,13 +54,18 @@ function inventorySupervisor(){
             break;
 
             case "Create new department":
-            console.log("create here");
+            newDept()
+            // console.log("create here");
             break;
+
+            case "Exit the application":
+            console.log("Have a nice day");
+            connection.end()
         }
     })
 }
 function departmentDisplay(){
-    var queryString = "SELECT products.product_sales, departments.department_id, departments.department_name, departments.over_head_costs FROM departments RIGHT JOIN products ON products.department_name = departments.department_name"
+    var queryString = "SELECT products.product_sales, departments.department_id, departments.department_name, departments.over_head_costs FROM departments RIGHT JOIN products ON products.department_name = departments.department_name GROUP BY departments.department_id"
     connection.query(queryString,function(err,res){
         if(err)throw err;
         // console.log("res",res)
@@ -74,5 +79,29 @@ function departmentDisplay(){
             )
         }
         console.log(table.toString());
+        inventorySupervisor()
     })
+}
+function newDept(){
+    inquirer.prompt([
+        {
+            type: "input",
+            name: "department_name",
+            message: "What department would you like to add?"
+        }
+
+        
+    ]).then(function(answers){
+            connection.query("INSERT INTO departments SET ?",
+            {
+                department_name: answers.department_name,
+                over_head_costs: 0,
+                // product_name: "placeholder",
+                // price: 0,
+                // stock_quanitity: 0,
+                // procuct_sales: 0,
+            })
+            displayDepts()
+    })
+
 }
