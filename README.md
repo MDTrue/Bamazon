@@ -1,5 +1,13 @@
 # Bamazon
-Welcome to BAMAZOM...a command line prompt shopping and inventory experience
+Welcome to BAMAZON...a command line prompt shopping and inventory experience
+# To Run BAMAZON
+* clone the repository
+* from your command line navigate to the Bamazon root directory
+* type in: npm install
+* once that has finished you can choose to interact with Bamazon as a...
+* customer type in: node bamazonCustomer.js
+* manager type in: node bamazonManager.js
+* supervisor type in: bamazonSupervisor.js
 
 =======
 ##The customer experience:
